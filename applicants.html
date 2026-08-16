@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Applicants</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav><a class="logo" href="/">CareerBridge</a><a href="/dashboard.html">Dashboard</a></nav>
+    <main class="container">
+        <h1>Applicants</h1>
+        <div id="list"></div>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+        async function load() { const id = new URLSearchParams(location.search).get("jobId"); const d = await api("/api/applications/job/" + id); list.innerHTML = d.applications.length ? d.applications.map(a => `<div class="panel applicant"><h3>${escapeHtml(a.userId.name)}</h3><p>${escapeHtml(a.userId.email)}</p><a class="button" target="_blank" href="/${a.resumeId.filePath}">View / Download Resume</a><select onchange="status('${a._id}',this.value)">${["Applied", "Review", "Shortlisted", "Interview", "Selected", "Rejected"].map(s => `<option ${s === a.status ? "selected" : ""}>${s}</option>`).join("")}</select></div>`).join("") : "<p>No applicants yet.</p>" } async function status(id, value) { const d = await api("/api/applications/" + id, { method: "PATCH", body: { status: value } }); alert(d.message) } load();
+    </script>
+</body>
+
+</html>

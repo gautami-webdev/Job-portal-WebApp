@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav><a class="logo" href="/">CareerBridge</a><a href="/login.html">Login</a></nav>
+    <main class="auth">
+        <form class="form-card" id="form">
+            <p class="eyebrow">Get started</p>
+            <h1>Create account</h1>
+            <input name="name" placeholder="Full name" required>
+            <input name="email" type="email" placeholder="Email" required>
+            <input name="password" type="password" placeholder="Password (min 6 characters)" required>
+            <select name="role">
+                <option value="user">Job Seeker</option>
+                <option value="employer">Employer</option>
+            </select><input name="company" placeholder="Company name (employers)"><button>Create Account</button>
+            <p id="msg"></p>
+        </form>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+        form.onsubmit = async e => { e.preventDefault(); const d = await api("/api/auth/register", { method: "POST", body: Object.fromEntries(new FormData(form)) }); if (d.success) { saveAuth(d); location.href = "/dashboard.html" } else msg.textContent = d.message };
+    </script>
+</body>
+
+</html>

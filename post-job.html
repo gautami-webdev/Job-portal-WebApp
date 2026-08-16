@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Post Job</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav><a class="logo" href="/">CareerBridge</a><a href="/dashboard.html">Dashboard</a></nav>
+    <main class="auth">
+        <form class="form-card" id="form">
+            <p class="eyebrow">Employer</p>
+            <h1>Post a Job</h1><input name="title" placeholder="Job title" required><input name="company"
+                placeholder="Company" required><input name="location" placeholder="Location" required><input
+                name="salary" placeholder="Salary"><select name="jobType">
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Internship</option>
+                <option>Remote</option>
+            </select><textarea name="description" placeholder="Job description" required></textarea><textarea
+                name="requirements" placeholder="Requirements"></textarea><button>Post Job</button>
+            <p id="msg"></p>
+        </form>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+        if (!getUser() || getUser().role !== "employer") location.href = "/login.html";
+        form.onsubmit = async e => { e.preventDefault(); const d = await api("/api/jobs", { method: "POST", body: Object.fromEntries(new FormData(form)) }); msg.textContent = d.message; if (d.success) location.href = "/dashboard.html" };
+    </script>
+</body>
+
+</html>

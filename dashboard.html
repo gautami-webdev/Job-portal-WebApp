@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav><a class="logo" href="/">CareerBridge</a>
+        <div><a href="/jobs.html">Jobs</a><a href="#" onclick="logout()">Logout</a></div>
+    </nav>
+    <main class="container">
+        <div id="dash"></div>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+        const user = getUser(); if (!user) location.href = "/login.html";
+        async function load() {
+            if (user.role === "employer") return employerDashboard();
+            const r = await api("/api/resumes/me");
+            const a = await api("/api/applications/my");
+            dash.innerHTML = `<div class="page-title"><p class="eyebrow">Job seeker</p><h1>Welcome, ${escapeHtml(user.name)}</h1></div>
+ <div class="dashboard-grid">
+ <section class="panel"><h2>My Resume</h2>${r.resume ? `<p><strong>${escapeHtml(r.resume.fileName)}</strong></p><a class="button" target="_blank" href="/${r.resume.filePath}">View Resume</a><button class="danger" onclick="deleteResume()">Delete</button>` : `<p>No resume uploaded yet.</p>`}
+ <form id="uploadForm" enctype="multipart/form-data"><input type="file" name="resume" accept=".pdf,.doc,.docx" required><button>Upload / Replace Resume</button></form></section>
+ <section class="panel"><h2>My Applications</h2>${a.applications.length ? a.applications.map(x => `<div class="application"><b>${escapeHtml(x.jobId.title)}</b><span>${escapeHtml(x.jobId.company)} · ${escapeHtml(x.status)}</span></div>`).join("") : "<p>No applications yet. <a href='/jobs.html'>Browse jobs</a></p>"}</section>
+ </div>`;
+            uploadForm.onsubmit = async e => { e.preventDefault(); const fd = new FormData(uploadForm); const d = await uploadApi("/api/resumes/upload", fd); alert(d.message); if (d.success) load() };
+        }
+        async function deleteResume() { if (confirm("Delete your resume?")) { const d = await api("/api/resumes/me", { method: "DELETE" }); alert(d.message); load() } }
+        async function employerDashboard() {
+            const j = await api("/api/jobs/my");
+            dash.innerHTML = `<div class="page-title"><p class="eyebrow">Employer</p><h1>Welcome, ${escapeHtml(user.name)}</h1><a class="button" href="/post-job.html">+ Post Job</a></div>
+ <section class="panel"><h2>My Jobs</h2>${j.jobs.length ? j.jobs.map(x => `<div class="job-row"><div><b>${escapeHtml(x.title)}</b><span>${escapeHtml(x.company)} · ${escapeHtml(x.location)}</span></div><div><a class="button small" href="/applicants.html?jobId=${x._id}">Applicants</a><button class="danger small" onclick="deleteJob('${x._id}')">Delete</button></div></div>`).join("") : "<p>No jobs posted yet.</p>"}</section>`;
+        }
+        async function deleteJob(id) { if (confirm("Delete this job?")) { const d = await api("/api/jobs/" + id, { method: "DELETE" }); alert(d.message); load() } }
+        load();
+    </script>
+</body>
+
+</html>

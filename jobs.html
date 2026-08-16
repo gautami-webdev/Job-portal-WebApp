@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobs - CareerBridge</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <nav><a class="logo" href="/">CareerBridge</a>
+    <div><a href="/jobs.html">Jobs</a><a href="/dashboard.html">Dashboard</a><a href="/login.html">Login</a></div>
+  </nav>
+  <main class="container">
+    <div class="page-title">
+      <p class="eyebrow">Opportunities</p>
+      <h1>Find a job</h1>
+    </div>
+    <div class="filters">
+      <input id="search" placeholder="Keyword">
+      <input id="location" placeholder="Location">
+      <select id="jobType">
+        <option value="">All types</option>
+        <option>Full Time</option>
+        <option>Part Time</option>
+        <option>Internship</option>
+        <option>Remote</option>
+      </select>
+      <button onclick="loadJobs()">Search</button>
+    </div>
+    <div id="jobs" class="job-grid"></div>
+  </main>
+  <script src="/js/main.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    search.value = params.get("search") || "";
+    location.value = params.get("location") || "";
+    async function loadJobs() {
+      const q = new URLSearchParams({ search: search.value, location: location.value, jobType: jobType.value });
+      const data = await api("/api/jobs?" + q);
+      jobs.innerHTML = data.jobs.length ? data.jobs.map(jobCard).join("") : emptyState("No jobs found.");
+    }
+    loadJobs();
+  </script>
+</body>
+
+</html>

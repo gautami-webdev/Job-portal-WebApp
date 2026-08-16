@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details - CareerBridge</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <nav><a class="logo" href="/">CareerBridge</a>
+    <div><a href="/jobs.html">Jobs</a><a href="/dashboard.html">Dashboard</a></div>
+  </nav>
+  <main class="container" id="content"></main>
+  <script src="/js/main.js"></script>
+  <script>
+    async function load() {
+      const id = new URLSearchParams(location.search).get("id");
+      const data = await api("/api/jobs/" + id);
+      const j = data.job;
+      content.innerHTML = `<div class="detail-card">
+    <span class="badge">${escapeHtml(j.jobType)}</span>
+    <h1>${escapeHtml(j.title)}</h1><h3>${escapeHtml(j.company)}</h3>
+    <p>📍 ${escapeHtml(j.location)} &nbsp; · &nbsp; 💰 ${escapeHtml(j.salary)}</p>
+    <hr><h2>Description</h2><p class="pre">${escapeHtml(j.description)}</p>
+    <h2>Requirements</h2><p class="pre">${escapeHtml(j.requirements || "Not specified")}</p>
+    <button onclick="applyNow('${j._id}')">Apply Now</button>
+  </div>`;
+    }
+    async function applyNow(jobId) {
+      const user = getUser();
+      if (!user) return location.href = "/login.html";
+      if (user.role !== "user") return alert("Only job seekers can apply.");
+      const r = await api("/api/resumes/me");
+      if (!r.resume) return alert("Please upload your resume from the dashboard first.");
+      const a = await api("/api/applications", { method: "POST", body: { jobId, resumeId: r.resume._id } });
+      alert(a.message); if (a.success) location.href = "/dashboard.html";
+    }
+    load();
+  </script>
+</body>
+
+</html>

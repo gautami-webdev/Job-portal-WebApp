@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareerBridge - Job Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav>
+  <a class="logo" href="/">CareerBridge</a>
+  <div>
+    <a href="/jobs.html">Jobs</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/login.html" id="authLink">Login</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div>
+    <p class="eyebrow">Find your next opportunity</p>
+    <h1>Find Your Dream Job Here !<br><span>We Provide You Real opportunities.</span></h1>
+    <p>Search jobs, upload your resume and apply in a few clicks.</p>
+    <div class="search-box">
+      <input id="homeSearch" placeholder="Job title, company or keyword">
+      <input id="homeLocation" placeholder="Location">
+      <button onclick="searchJobs()">Search Jobs</button>
+    </div>
+  </div>
+</header>
+
+<section class="container">
+  <div class="section-head">
+    <div><p class="eyebrow">Latest openings</p><h2>Featured Jobs</h2></div>
+    <a href="/jobs.html">View all →</a>
+  </div>
+  <div id="featuredJobs" class="job-grid"></div>
+</section>
+<footer>© 2026 JobNest · Built with Node.js, Express & MongoDB</footer>
+<script src="/js/main.js"></script>
+<script>
+async function loadFeatured() {
+  const data = await api("/api/jobs");
+  document.getElementById("featuredJobs").innerHTML = data.jobs.slice(0, 6).map(jobCard).join("");
+}
+function searchJobs() {
+  const q = encodeURIComponent(document.getElementById("homeSearch").value);
+  const l = encodeURIComponent(document.getElementById("homeLocation").value);
+  location.href = `/jobs.html?search=${q}&location=${l}`;
+}
+loadFeatured();
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav><a class="logo" href="/">CareerBridge</a><a href="/register.html">Create account</a></nav>
+    <main class="auth">
+        <form class="form-card" id="form">
+            <p class="eyebrow">Welcome back</p>
+            <h1>Login</h1><input name="email" type="email" placeholder="Email" required><input name="password"
+                type="password" placeholder="Password" required><button>Login</button>
+            <p id="msg"></p>
+            <p>Don't have an account? <a href="/register.html">Register</a></p>
+        </form>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+        form.onsubmit = async e => { e.preventDefault(); const f = new FormData(form); const d = await api("/api/auth/login", { method: "POST", body: Object.fromEntries(f) }); if (d.success) { saveAuth(d); location.href = "/dashboard.html" } else msg.textContent = d.message };
+    </script>
+</body>
+
+</html>
