@@ -26,6 +26,9 @@
  <div class="dashboard-grid">
  <section class="panel"><h2>My Resume</h2>${r.resume ? `<p><strong>${escapeHtml(r.resume.fileName)}</strong></p><a class="button" target="_blank" href="/${r.resume.filePath}">View Resume</a><button class="danger" onclick="deleteResume()">Delete</button>` : `<p>No resume uploaded yet.</p>`}
  <form id="uploadForm" enctype="multipart/form-data"><input type="file" name="resume" accept=".pdf,.doc,.docx" required><button>Upload / Replace Resume</button></form></section>
+ <a href="create-resume.html" class="btn btn-primary">
+    Create Resume
+ </a>
  <section class="panel"><h2>My Applications</h2>${a.applications.length ? a.applications.map(x => `<div class="application"><b>${escapeHtml(x.jobId.title)}</b><span>${escapeHtml(x.jobId.company)} · ${escapeHtml(x.status)}</span></div>`).join("") : "<p>No applications yet. <a href='/jobs.html'>Browse jobs</a></p>"}</section>
  </div>`;
             uploadForm.onsubmit = async e => { e.preventDefault(); const fd = new FormData(uploadForm); const d = await uploadApi("/api/resumes/upload", fd); alert(d.message); if (d.success) load() };
